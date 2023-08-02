@@ -18,6 +18,7 @@ class Profile(models.Model):
         return f"{self.owner.username}'s profile"
 
 
+# Using django signals to create a profile for a user when the user is created
 def create_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(owner=instance)
