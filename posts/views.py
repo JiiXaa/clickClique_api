@@ -1,4 +1,5 @@
 from django.db.models import Count
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, permissions, filters
 from cc_api.permissions import IsOwnerOrReadOnly
 from .models import Post
@@ -20,6 +21,16 @@ class PostList(generics.ListCreateAPIView):
     filter_backends = [
         filters.OrderingFilter,
         filters.SearchFilter,
+        DjangoFilterBackend,
+    ]
+    # id is not needed as it is the default ordering field
+    filterset_fields = [
+        # show user feed posts searching by who is following user posts.
+        "owner__followed__owner__profile",
+        # show user liked posts
+        "likes__owner__profile",
+        # show user posts
+        "owner__profile",
     ]
     search_fields = [
         "owner__username",
