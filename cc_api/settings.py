@@ -31,8 +31,18 @@ REST_FRAMEWORK = {
             if "DEV" in os.environ
             else "dj_rest_auth.jwt_auth.JWTCookieAuthentication"
         )
-    ]
+    ],
+    # Pagination is set to 10 items per page
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+    # Date time format is set to 01 Jan 2021
+    "DATETIME_FORMAT": "%d %b %Y",
 }
+# If the DEV value is not in the environment then the browsable API is disabled and the JSON renderer is used instead. Don't want to send the html to the client in production, only the JSON.
+if "DEV" not in os.environ:
+    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = [
+        "rest_framework.renderers.JSONRenderer",
+    ]
 
 REST_USE_JWT = True
 # auth secure is set to true to ensure that the cookie is only sent over HTTPS
