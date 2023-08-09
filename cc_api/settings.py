@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 
 if os.path.exists("env.py"):
     import env
@@ -44,6 +45,17 @@ if "DEV" not in os.environ:
         "rest_framework.renderers.JSONRenderer",
     ]
 
+if "DEV" in os.environ:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+else:
+    DATABASES = {"default": dj_database_url.parse(os.environ.get("DATABASE_URL"))}
+
+
 REST_USE_JWT = True
 # auth secure is set to true to ensure that the cookie is only sent over HTTPS
 JWT_AUTH_SECURE = True
@@ -51,6 +63,7 @@ JWT_AUTH_SECURE = True
 JWT_AUTH_COOKIE = "cc_api_auth"
 # Refresh token
 JWT_AUTH_REFRESH_COOKIE = "cc_api_auth_refresh"
+JWT_AUTH_SAMESITE = None
 
 REST_AUTH_SERIALIZERS = {
     "USER_DETAILS_SERIALIZER": "cc_api.serializers.CurrentUserSerializer"
@@ -60,12 +73,12 @@ REST_AUTH_SERIALIZERS = {
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-7f+og1f&p974io)qoy#)uwq2e68!k&_4ynm*k&j^d0i+4_nubp"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Set debug to true if the DEV value is in the environment
+DEBUG = "DEV" in os.environ
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "cc-api-ye4y.onrender.com"]
 
 
 # Application definition
@@ -88,6 +101,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "dj_rest_auth.registration",
+    "corsheaders",
     "profiles",
     "posts",
     "comments",
@@ -97,6 +111,7 @@ INSTALLED_APPS = [
 SITE_ID = 1
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -105,6 +120,14 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# CORS whitelist
+if "CLIENT_ORIGIN" in os.environ:
+    CORS_ORIGIN_WHITELIST = [
+        os.environ.get("CLIENT_ORIGIN"),
+    ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = "cc_api.urls"
 
@@ -125,17 +148,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "cc_api.wsgi.application"
-
-
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
 
 
 # Password validation
