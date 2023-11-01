@@ -78,7 +78,11 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # Set debug to true if the DEV value is in the environment
 DEBUG = "DEV" in os.environ
 
-ALLOWED_HOSTS = ["localhost", "cc-api-ye4y.onrender.com"]
+ALLOWED_HOSTS = [
+    "localhost",
+    "cc-api-ye4y.onrender.com",
+    "https://click-clique.vercel.app",
+]
 
 
 # Application definition
