@@ -81,7 +81,7 @@ DEBUG = "DEV" in os.environ
 ALLOWED_HOSTS = [
     "localhost",
     "cc-api-ye4y.onrender.com",
-    "https://click-clique.vercel.app",
+    "click-clique.vercel.app",
 ]
 
 
