@@ -16,6 +16,7 @@ class Like(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        # * The unique_together constraint ensures that a user can't like the same post more than once.
         unique_together = ["owner", "post"]
 
     def __str__(self):

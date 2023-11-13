@@ -23,10 +23,12 @@ class PostSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Image height should be less than 4096px")
         return value
 
+    # * Get the is_owner boolean for the associated post if the user is authenticated.
     def get_is_owner(self, obj):
         request = self.context["request"]
         return obj.owner == request.user
 
+    # * Get the like id for the associated post if the user is authenticated.
     def get_like_id(self, obj):
         user = self.context["request"].user
         if user.is_authenticated:
